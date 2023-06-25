@@ -48,12 +48,29 @@ def startCode():
             )
     time.sleep(2)
 
-def makeShot(theme):
+def makeShot(shotName):
+    subprocess.call(["scrot", "/".join([shotsdir,shotName])+".png"])
+    print("screenshot: " + shotName)
+
+def setTheme(themeName):
+    print("Switch Theme: " + themeName)
     sendkeys(
             "Ctrl+k Ctrl+t",
-            "!"+theme+"<CR>")
-    subprocess.call(["scrot", "/".join([shotsdir,theme])+".png"])
-    print("shot: "+theme)
+            "!"+themeName+"<CR>")
+
+def sendCmd(command):
+    sendkeys(
+            "Ctrl+p",
+            "!"+command+"<CR>"
+            )
+
+def editorCmd(command):
+    print("Editor Command: " + command)
+    sendCmd(">"+command)
+
+def lineJump(lineNo):
+    print("Jump to line: " + lineNo)
+    sendCmd(":"+lineNo)
 
 # setting default directories / filenames
 themes = [
@@ -69,5 +86,8 @@ for dr in [shotsdir]:
         os.mkdir(dr)
 startCode()
 print("taking screenshots...")
-for theme in themes:
-    makeShot(theme)
+for themeName in themes:
+    setTheme(themeName)
+    makeShot(themeName)
+editorCmd("openworkspace")
+makeShot("openworkspace")
