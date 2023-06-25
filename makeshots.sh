@@ -1,4 +1,5 @@
 #!/bin/bash
+docker build -t vscode-docker-shots .
 TMPDIR=$(mktemp -d -t codeshots)
 if [[ ! "$TMPDIR" || ! -d "$TMPDIR" ]]; then
 	echo "error creating temp dir"
@@ -12,7 +13,7 @@ function cleanup {
 }
 
 trap cleanup EXIT
-docker run --rm -it -v $TMPDIR:/home/codeuser/shots --name xtest xvfb-test /home/codeuser/getshots.py
+docker run --rm -it -v $TMPDIR:/home/codeuser/shots --name codeshots vscode-docker-shots /home/codeuser/getshots.py
 mkdir shots
 cp $TMPDIR/*.png shots
 echo "Copied screenshots to the 'shots' directory"
