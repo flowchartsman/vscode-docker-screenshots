@@ -14,6 +14,6 @@ function cleanup {
 
 trap cleanup EXIT
 docker run --rm -it -v $TMPDIR:/home/codeuser/shots --name codeshots vscode-docker-shots /home/codeuser/getshots.py
-mkdir shots
+mkdir -p shots
 cp $TMPDIR/*.png shots
 echo "Copied screenshots to the 'shots' directory"

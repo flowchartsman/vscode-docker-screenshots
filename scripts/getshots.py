@@ -42,7 +42,7 @@ def dosend(keys):
     subprocess.call(["xdotool", "key", "--delay", "100"]+keys)
 
 def startCode():
-    print("setting up vscode...")
+    print("[INITCMD]")
     sendkeys(
             "Escape Escape KP_Enter space"
             )
@@ -50,10 +50,10 @@ def startCode():
 
 def makeShot(shotName):
     subprocess.call(["scrot", "/".join([shotsdir,shotName])+".png"])
-    print("screenshot: " + shotName)
+    print("[SCRSHOT] {}".format(shotName))
 
 def setTheme(themeName):
-    print("Switch Theme: " + themeName)
+    print("[SWTHEME] {}".format(themeName))
     sendkeys(
             "Ctrl+k Ctrl+t",
             "!"+themeName+"<CR>")
@@ -65,11 +65,11 @@ def sendCmd(command):
             )
 
 def editorCmd(command):
-    print("Editor Command: " + command)
+    print("[EDTRCMD] {}".format(command))
     sendCmd(">"+command)
 
 def lineJump(lineNo):
-    print("Jump to line: " + lineNo)
+    print("[JMPLINE] {}".format(lineNo))
     sendCmd(":"+lineNo)
 
 # setting default directories / filenames
@@ -80,14 +80,13 @@ themes = [
 #home = os.environ["HOME"]
 #shotsdir = home+"/"+"shots"
 shotsdir = "/home/codeuser/shots"
-print("setting up directories...")
+print("[INITDIR]")
 for dr in [shotsdir]:
     if not os.path.exists(dr):
         os.mkdir(dr)
 startCode()
-print("taking screenshots...")
 for themeName in themes:
     setTheme(themeName)
     makeShot(themeName)
-editorCmd("openworkspace")
-makeShot("openworkspace")
+#editorCmd("openworkspace")
+#makeShot("openworkspace")
