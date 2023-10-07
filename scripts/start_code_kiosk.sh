@@ -1,27 +1,23 @@
 #!/bin/bash
+code_do()
+{
+    "$@" 2>&1 | grep -v "^(node" | grep -v "trace-deprecation"
+}
 export DISPLAY=:99
-sudo Xvfb :99 -ac -screen 0 "$XVFB_RES" -nolisten tcp $XVFB_ARGS >/dev/null &
-#XVFB_PROC=$!
-export XAUTHORITY=/tmp/xauth
-echo -n "Waiting for Xvfb to start up..."
-while ! xdpyinfo -display :99 >/dev/null 2>&1; do
-	echo -n "."
-	sleep 0.5
-done
-echo "done"
 cd /home/codeuser
 echo -n "Starting matchbox-window-manager..."
-matchbox-window-manager -use_cursor no -use_titlebar no -use_desktop_mode plain >/dev/null &
+sudo xvfb-run --server-args="-ac -screen 0 $XVFB_RES" -- matchbox-window-manager -use_cursor no -use_titlebar no -use_desktop_mode plain &
 sleep 3
 echo "done"
-echo -n "Starting VSCode..."
-code --no-sandbox &
-sleep 3
-echo "done"
-echo "Running script..."
+cp .code-init/* .config/Code/User
+for file in extensions/*.vsix; do
+	echo "Installing extension $(basename $file)"
+	code_do code --install-extension "$file"
+done
+code --no-sandbox --disable-workspace-trust ./code &
+./waitvscode.py
+echo "Running user commands..."
 "$@"
 echo -n "Waiting for last command to settle..."
 sleep 3
 echo "done"
-echo "Exiting"
-#sudo kill $XVFB_PROC
