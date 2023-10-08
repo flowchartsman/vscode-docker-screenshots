@@ -4,6 +4,7 @@ WORKDIR /usr/bin
 RUN apt-get update -y \
   && apt-get install --no-install-recommends -y \
   ca-certificates \
+  unzip \
   gnupg \
   matchbox \
   xauth \
@@ -20,12 +21,19 @@ RUN  curl -s -L -o vscode.deb "https://code.visualstudio.com/sha/download?build=
   apt-get install -y ./vscode.deb && \
   rm vscode.deb && \
   rm -rf /var/lib/apt/lists/*
+RUN curl -s -L -o jbmono.zip https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip && \
+  unzip jbmono.zip "fonts/ttf/*" && \
+  mv fonts/ttf/*.ttf /usr/share/fonts && \
+  fc-cache -f
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN useradd -ms /bin/bash codeuser
 RUN usermod -aG sudo codeuser
 USER codeuser
 RUN go install -v golang.org/x/tools/gopls@latest
-RUN code --no-sandbox --install-extension golang.Go --install-extension ms-python.python
+RUN code --no-sandbox \
+  --install-extension golang.Go \
+  --install-extension ms-python.python \
+  --install-extension ShaneLiesegang.vscode-simple-icons-rev
 WORKDIR /home/codeuser
 RUN mkdir extensions
 COPY --chown=codeuser:codeuser assets/vscode-user/* .code-init/
