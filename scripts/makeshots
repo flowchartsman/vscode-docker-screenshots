@@ -2,8 +2,19 @@
 import argparse
 import os
 import subprocess
-import sys
 import time
+
+class vidSession:
+  def __init__(self, dest):
+    self.dest=dest
+    print("[STRTVID] {}".format(dest))
+    self.proc = subprocess.Popen(["ffmpeg", "-y", "-f", "x11grab", "-video_size", os.getenv('X_RES'), "-r", "15", "-i", ":99", "-codec:v", "libx264", dest], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+  def stop(self):
+    print("[STOPVID] {}".format(self.dest))
+    out, err = self.proc.communicate(input=b'q')
+    code = self.proc.returncode
+    cmd = self.proc.args
+    return code, cmd, out, err
 
 def sendkeys(*args):
     for a in args:
@@ -11,7 +22,7 @@ def sendkeys(*args):
             sendtext(a[1:])
         else:
             sendkeystrokes(a)
-        time.sleep(2)
+        time.sleep(1)
 
 def sendtext(str):
     sendCR = False
@@ -37,10 +48,12 @@ def sendkeystrokes(keystring):
         else:
             out += [x for x in p]
     dosend(out)
-    time.sleep(2)
 
 def dosend(keys):
     subprocess.call(["xdotool", "key", "--delay", "100"]+keys)
+
+def startVid(videoName):
+    return vidSession("/".join([shotsdir,videoName])+".mp4")
 
 def makeShot(shotName):
     subprocess.call(["scrot", "--overwrite", "/".join([shotsdir,shotName])])
@@ -97,6 +110,8 @@ for theme in args.themes:
         shots[themeSpec[0]]=themeSpec[1]
     else:
         shots[theme]=theme
+#vid = startVid("testvid")
 for key, value in shots.items():
     setTheme(key)
     makeShot(value)
+#code, cmd, out, err = vid.stop()

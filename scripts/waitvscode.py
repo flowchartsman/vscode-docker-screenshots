@@ -5,7 +5,7 @@ import sys
 import time
 
 if __name__ == '__main__':
-    print("Waiting for vscode.",end="",flush=True)
+    print("Waiting for vscodium.",end="",flush=True)
     for _ in range(10):
         try:
             focused = Xlib.display.Display().get_input_focus().focus
@@ -14,10 +14,13 @@ if __name__ == '__main__':
                 time.sleep(1)
                 continue
             app = focused.get_wm_class()[0]
-            if app == "code":
+            if app == "vscodium":
                 time.sleep(3)
                 print("done",flush=True)
                 sys.exit(0)
+            else:
+                print("unexpected app {}".format(app))
+                sys.exit(1)
         except AttributeError:
             print(".", end ="",flush=True)
             time.sleep(1)

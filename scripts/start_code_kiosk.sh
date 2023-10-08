@@ -9,13 +9,17 @@ echo -n "Starting matchbox-window-manager..."
 sudo xvfb-run --server-args="-ac -screen 0 $XVFB_RES" -- matchbox-window-manager -use_cursor no -use_titlebar no -use_desktop_mode plain &
 sleep 3
 echo "done"
-cp .code-init/* .config/Code/User
 if test -n "$(find ./extensions -maxdepth 1 -name '*.vsix' -print -quit)"
 then
 	for file in extensions/*.vsix; do
 		echo "Installing extension $(basename $file)"
 		code_do code --install-extension "$file"
 	done
+fi
+if test -f settings.json
+then
+	echo "merging user settings"
+	jq '. * input' .config/VSCodium/User/settings.json settings.json > .config/VSCodium/User/settings.json
 fi
 code --no-sandbox --disable-workspace-trust ./code &
 ./waitvscode.py
