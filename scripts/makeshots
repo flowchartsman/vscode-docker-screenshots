@@ -43,7 +43,7 @@ def dosend(keys):
     subprocess.call(["xdotool", "key", "--delay", "100"]+keys)
 
 def makeShot(shotName):
-    subprocess.call(["scrot", "--overwrite", "/".join([shotsdir,shotName])+".png"])
+    subprocess.call(["scrot", "--overwrite", "/".join([shotsdir,shotName])])
     print("[SCRSHOT] {}".format(shotName))
 
 def setTheme(themeName):
@@ -88,8 +88,15 @@ for dr in [shotsdir]:
     if not os.path.exists(dr):
         os.mkdir(dr)
 openFile(args.samplefile)
-if args.fileline > 0:
+if int(args.fileline) > 0:
     lineJump(args.fileline)
-for themeName in args.themes:
-    setTheme(themeName)
-    makeShot(themeName)
+shots = {}
+for theme in args.themes:
+    themeSpec = theme.split(",",1)
+    if len(themeSpec) == 2:
+        shots[themeSpec[0]]=themeSpec[1]
+    else:
+        shots[theme]=theme
+for key, value in shots.items():
+    setTheme(key)
+    makeShot(value)
