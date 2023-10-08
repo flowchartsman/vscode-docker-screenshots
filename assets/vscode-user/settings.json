@@ -1,4 +1,7 @@
 {
+    "workbench.iconTheme": "minimalistic-icons",
+    "editor.fontFamily": "JetBrains Mono",
+    "editor.fontLigatures": true,
     // Disable sending telemetry
     "clangd.checkUpdates": false, // Clangd
     "code-runner.enableAppInsights": false, // Code Runner
