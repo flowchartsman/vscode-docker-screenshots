@@ -17,14 +17,16 @@ RUN apt-get update -y \
   python3-pip \
   imagemagick && \
   pip3 install --break-system-packages Xlib
-RUN  curl -s -L -o vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-$TARGETARCH" && \
+RUN case ${TARGETARCH} in arm64|arm/v8) CARCH="arm64" ;; amd64) CARCH="x64" ;; esac && \
+  curl -s -L -o vscode.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-${CARCH}" && \
   apt-get install -y ./vscode.deb && \
   rm vscode.deb && \
   rm -rf /var/lib/apt/lists/*
 RUN curl -s -L -o jbmono.zip https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip && \
   unzip jbmono.zip "fonts/ttf/*" && \
   mv fonts/ttf/*.ttf /usr/share/fonts && \
-  fc-cache -f
+  fc-cache -f && \
+  rm -rf fonts jbmono.zip
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN useradd -ms /bin/bash codeuser
 RUN usermod -aG sudo codeuser
