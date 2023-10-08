@@ -27,6 +27,7 @@ USER codeuser
 RUN go install -v golang.org/x/tools/gopls@latest
 RUN code --no-sandbox --install-extension golang.Go --install-extension ms-python.python
 WORKDIR /home/codeuser
+RUN mkdir extensions
 COPY --chown=codeuser:codeuser assets/vscode-user/* .code-init/
 COPY --chown=codeuser:codeuser scripts/start_code_kiosk.sh .
 COPY --chown=codeuser:codeuser scripts/makeshots .
